@@ -52,7 +52,7 @@ void osx_screen_get_dimensions(struct screen *scr, int *w, int *h)
 	*h = scr->h;
 }
 
-void macos_init_screen()
+void macos_init_screen(void)
 {
 	for (NSScreen *screen in NSScreen.screens) {
 		struct screen *scr = &screens[nr_screens++];

@@ -109,7 +109,7 @@ NSColor *nscolor_from_hex(const char *str)
 					 alpha:(float)a / 255];
 }
 
-void osx_copy_selection()
+void osx_copy_selection(void)
 {
 	int shifted;
 
@@ -144,7 +144,7 @@ void osx_scroll(int direction)
 	CGEventPost(kCGHIDEventTap, ev);
 }
 
-void osx_commit()
+void osx_commit(void)
 {
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		size_t i;

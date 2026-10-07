@@ -23,7 +23,7 @@ static int dragging = 0;
 
 static CursorHider *hider = NULL;
 
-static long get_time_ms()
+static long get_time_ms(void)
 {
 	struct timespec ts;
 
@@ -190,7 +190,7 @@ void osx_mouse_move(struct screen *scr, int x, int y)
 	CFRelease(ev);
 }
 
-void osx_mouse_hide()
+void osx_mouse_hide(void)
 {
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		if (hider_timer)
@@ -209,7 +209,7 @@ void osx_mouse_hide()
 	});
 }
 
-void osx_mouse_show()
+void osx_mouse_show(void)
 {
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		int i;
@@ -228,7 +228,7 @@ void osx_mouse_show()
 	});
 }
 
-void macos_init_mouse()
+void macos_init_mouse(void)
 {
 	/*
 	 * Kludge to make background cursor setting work.
@@ -238,7 +238,7 @@ void macos_init_mouse()
 	 */
 
 	void CGSSetConnectionProperty(int, int, CFStringRef, CFBooleanRef);
-	int _CGSDefaultConnection();
+	int _CGSDefaultConnection(void);
 	CFStringRef propertyString;
 
 	propertyString = CFStringCreateWithCString(

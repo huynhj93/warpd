@@ -1,6 +1,6 @@
 #include "warpd.h"
 
-void screen_selection_mode()
+void screen_selection_mode(void)
 {
 	size_t i;
 	size_t n;

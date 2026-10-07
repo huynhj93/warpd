@@ -36,7 +36,7 @@ struct mod {
     {PLATFORM_MOD_ALT, 59, 62},
 };
 
-static long get_time_ms()
+static long get_time_ms(void)
 {
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -69,7 +69,7 @@ static int read_message(int fd, void *msg, ssize_t sz, int timeout)
 	return 0;
 }
 
-void osx_input_interrupt()
+void osx_input_interrupt(void)
 {
 	struct input_event ev = {0};
 	write_message(input_fds[1], &ev, sizeof ev);
@@ -278,14 +278,14 @@ void send_key(uint8_t code, int pressed)
 	});
 }
 
-void osx_input_ungrab_keyboard()
+void osx_input_ungrab_keyboard(void)
 {
 	dispatch_sync(dispatch_get_main_queue(), ^{
 		grabbed = 0;
 	});
 }
 
-void osx_input_grab_keyboard()
+void osx_input_grab_keyboard(void)
 {
 	if (grabbed)
 		return;
@@ -332,7 +332,7 @@ struct input_event *osx_input_wait(struct input_event *keys, size_t sz)
 	}
 }
 
-static void update_keymap()
+static void update_keymap(void)
 {
 	static uint8_t valid_keycodes[256] = {
 		[0x01] = 1, [0x02] = 1, [0x03] = 1, [0x04] = 1, [0x05] = 1, [0x06] = 1, [0x07] = 1, [0x08] = 1,
@@ -463,7 +463,7 @@ static void keyboard_layout_changed(CFNotificationCenterRef center, void *observ
 }
 
 /* Called by the main thread to set up event stream. */
-void macos_init_input()
+void macos_init_input(void)
 {
 	/* Request accessibility access if not present. */
 	NSDictionary *options = @{(id)kAXTrustedCheckOptionPrompt : @YES};
