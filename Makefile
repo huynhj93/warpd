@@ -17,7 +17,6 @@ CFLAGS:=-g\
        -Wall\
        -Wextra\
        -pedantic\
-       -Wno-deprecated-declarations\
        -Wno-unused-parameter\
        -std=c99\
        -DVERSION='"v$(VERSION)$(COMMITSTR)"'\
