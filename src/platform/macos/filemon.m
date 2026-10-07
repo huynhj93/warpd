@@ -16,7 +16,7 @@ void osx_monitor_file(const char *_path)
 						    encoding:NSUTF8StringEncoding];
 
 
-		CFArrayRef paths = CFArrayCreate(NULL, (void**)&path, 1, NULL);
+		CFArrayRef paths = CFArrayCreate(NULL, (const void **)&path, 1, NULL);
 		FSEventStreamContext context;
 
 		context.version = 0;
