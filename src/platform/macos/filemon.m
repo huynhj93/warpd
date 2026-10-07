@@ -31,7 +31,7 @@ void osx_monitor_file(const char *_path)
 		    kFSEventStreamCreateFlagFileEvents |
 			kFSEventStreamCreateFlagWatchRoot);
 
-		FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+		FSEventStreamSetDispatchQueue(stream, dispatch_get_main_queue());
 		FSEventStreamStart(stream);
 	});
 }
