@@ -455,6 +455,13 @@ static void update_keymap()
 	pthread_mutex_unlock(&keymap_mtx);
 }
 
+static void keyboard_layout_changed(CFNotificationCenterRef center, void *observer,
+				    CFNotificationName name, const void *object,
+				    CFDictionaryRef userInfo)
+{
+	update_keymap();
+}
+
 /* Called by the main thread to set up event stream. */
 void macos_init_input()
 {
@@ -494,7 +501,7 @@ void macos_init_input()
 	CGEventTapEnable(tap, true);
 
 	CFNotificationCenterAddObserver(
-	    CFNotificationCenterGetLocalCenter(), NULL, update_keymap,
+	    CFNotificationCenterGetLocalCenter(), NULL, keyboard_layout_changed,
 	    CFSTR("NSTextInputContextKeyboardSelectionDidChangeNotification"),
 	    NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 
