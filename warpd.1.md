@@ -133,6 +133,14 @@ This mode is intended for multi-screen setups and provides the user with a
 dedicated set of hints for switching monitors and dropping them into normal
 mode.
 
+## Next Screen ('A-M-n' or simply 'N' within normal mode)
+
+Moves the pointer to the centre of the next screen, wrapping around, without
+drawing hints or entering a mode. From outside warpd ('A-M-n') control returns
+immediately, so on a two-screen setup it works as a single-key toggle between
+monitors. It only moves the pointer: keyboard focus stays with whichever window
+had it.
+
 ## Dragging
 
 Pressing _v_ whilst in normal mode toggles a drag operation. The cursor can

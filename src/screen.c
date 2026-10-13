@@ -52,3 +52,28 @@ void screen_selection_mode()
 
 	platform->commit();
 }
+
+/*
+ * Unlike screen_selection_mode() this draws nothing and never grabs the
+ * keyboard, so it can't wedge input the way selection mode can.
+ */
+void screen_next(void)
+{
+	size_t i, n;
+	int w, h;
+	screen_t cur;
+	screen_t screens[MAX_SCREENS];
+
+	platform->screen_list(screens, &n);
+	if (n < 2)
+		return;
+
+	platform->mouse_get_position(&cur, NULL, NULL);
+	for (i = 0; i < n; i++)
+		if (screens[i] == cur)
+			break;
+
+	cur = screens[i < n ? (i + 1) % n : 0];
+	platform->screen_get_dimensions(cur, &w, &h);
+	platform->mouse_move(cur, w / 2, h / 2);
+}
