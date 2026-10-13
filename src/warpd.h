@@ -93,6 +93,7 @@ int hintspec_mode(void);
 int history_hint_mode(void);
 int full_hint_mode(int second_pass);
 void screen_selection_mode(void);
+void screen_next(void);
 struct input_event *grid_mode(void);
 struct input_event *normal_mode(struct input_event *start_ev, int oneshot);
 

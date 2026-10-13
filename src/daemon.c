@@ -8,6 +8,7 @@ static const char *activation_keys[] = {
 	"hint2_activation_key",
 	"hint2_oneshot_key",
 	"history_activation_key",
+	"screen_next_key",
 };
 
 static struct input_event activation_events[sizeof activation_keys / sizeof activation_keys[0]];
@@ -65,6 +66,11 @@ void daemon_loop(const char *config_path)
 			continue;
 		} else if (config_input_match(ev, "history_oneshot_key")) {
 			history_hint_mode();
+			continue;
+		} else if (config_input_match(ev, "screen_next_key")) {
+			/* The event tap grabbed the keyboard when this key matched; no mode will release it. */
+			screen_next();
+			platform->input_ungrab_keyboard();
 			continue;
 		}
 

@@ -19,6 +19,7 @@ static struct {
 	{ "grid_activation_key", "A-M-g", "Activates grid mode and allows for further manipulation of the pointer using the mapped keys.", OPT_KEY },
 	{ "history_activation_key", "A-M-h", "Activate history mode.", OPT_KEY },
 	{ "screen_activation_key", "A-M-s", "Activate (s)creen selection mode.", OPT_KEY },
+	{ "screen_next_key", "A-M-n", "Move the pointer to the centre of the (n)ext screen without entering a mode.", OPT_KEY },
 	{ "activation_key", "A-M-c", "Activate normal movement mode (manual (c)ursor movement).", OPT_KEY },
 
 	{ "hint_oneshot_key", "A-M-l", "Activate hint mode and exit upon selection.", OPT_KEY },
@@ -41,6 +42,7 @@ static struct {
 	{ "hint2", "X", "Activate two pass hint mode.", OPT_KEY },
 	{ "grid", "g", "Activate (g)rid mode while in normal mode.", OPT_KEY },
 	{ "screen", "s", "Activate (s)creen selection while in normal mode.", OPT_KEY },
+	{ "screen_next", "N", "Move the pointer to the centre of the (n)ext screen while in normal mode.", OPT_KEY },
 
 	{ "left", "h", "Move the cursor left in normal mode.", OPT_KEY },
 	{ "down", "j", "Move the cursor down in normal mode.", OPT_KEY },

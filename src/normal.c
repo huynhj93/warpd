@@ -86,6 +86,7 @@ struct input_event *normal_mode(struct input_event *start_ev, int oneshot)
 		"print",
 		"right",
 		"screen",
+		"screen_next",
 		"scroll_down",
 		"scroll_up",
 		"start",
@@ -178,6 +179,15 @@ struct input_event *normal_mode(struct input_event *start_ev, int oneshot)
 			move(scr, 1, my, !show_cursor);
 		else if (config_input_match(ev, "end"))
 			move(scr, sw - cursz, my, !show_cursor);
+		else if (config_input_match(ev, "screen_next")) {
+			screen_t prev = scr;
+
+			screen_next();
+			platform->screen_clear(prev);
+			platform->mouse_get_position(&scr, &mx, &my);
+			platform->screen_get_dimensions(scr, &sw, &sh);
+			redraw(scr, mx, my, !show_cursor);
+		}
 		else if (config_input_match(ev, "hist_back")) {
 			hist_add(mx, my);
 			hist_prev();
