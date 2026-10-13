@@ -54,8 +54,9 @@ void screen_selection_mode(void)
 }
 
 /*
- * Unlike screen_selection_mode() this draws nothing and never grabs the
- * keyboard, so it can't wedge input the way selection mode can.
+ * Move the pointer to the centre of the next screen, wrapping around. Unlike
+ * screen_selection_mode() this draws nothing, waits for no input and leaves
+ * no mode active afterwards.
  */
 void screen_next(void)
 {
