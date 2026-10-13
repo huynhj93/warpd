@@ -9,6 +9,7 @@ static const char *activation_keys[] = {
 	"hint2_oneshot_key",
 	"history_activation_key",
 	"screen_next_key",
+	"click_key",
 };
 
 static struct input_event activation_events[sizeof activation_keys / sizeof activation_keys[0]];
@@ -25,6 +26,40 @@ static void reload_config(const char *path)
 	for (i = 0; i < sizeof activation_keys / sizeof activation_keys[0]; i++)
 		input_parse_string(&activation_events[i], config_get(activation_keys[i]));
 
+}
+
+/*
+ * Clicks carry whatever modifiers are physically held, so a click sent while
+ * a hotkey's modifiers are still down reaches the app as a modified click
+ * (cmd-click, alt-click, ...). Wait for them to be released; returns 0 if
+ * they're still held after a second, so the caller can skip the click.
+ */
+static int await_modifier_release(uint8_t mods)
+{
+	int waited;
+
+	for (waited = 0; mods && waited < 1000; waited += 20) {
+		struct input_event *ev = platform->input_next_event(20);
+		const char *name;
+
+		if (!ev || ev->pressed)
+			continue;
+
+		name = platform->input_lookup_name(ev->code, 0);
+		if (!name)
+			continue;
+
+		if (strstr(name, "meta"))
+			mods &= ~PLATFORM_MOD_META;
+		else if (strstr(name, "alt"))
+			mods &= ~PLATFORM_MOD_ALT;
+		else if (strstr(name, "control"))
+			mods &= ~PLATFORM_MOD_CONTROL;
+		else if (strstr(name, "shift"))
+			mods &= ~PLATFORM_MOD_SHIFT;
+	}
+
+	return !mods;
 }
 
 void daemon_loop(const char *config_path)
@@ -71,6 +106,14 @@ void daemon_loop(const char *config_path)
 			/* The event tap grabbed the keyboard when this key matched; no mode will release it. */
 			screen_next();
 			platform->input_ungrab_keyboard();
+			continue;
+		} else if (config_input_match(ev, "click_key")) {
+			/* ev is overwritten by the next read, so take the modifiers first. */
+			uint8_t mods = ev->mods;
+
+			platform->input_ungrab_keyboard();
+			if (await_modifier_release(mods))
+				platform->mouse_click(1);
 			continue;
 		}
 

@@ -412,6 +412,7 @@ static void update_keymap(void)
 	strcpy(keymap[code].name, keyname); \
 	strcpy(keymap[code].shifted_name, ""); \
 	break;
+			case 37: set_name("enter")
 			case 55: set_name("rightmeta")
 			case 56: set_name("leftmeta")
 			case 57: set_name("leftshift")
