@@ -252,23 +252,16 @@ struct input_event *normal_mode(struct input_event *start_ev, int oneshot)
 				histfile_add(mx, my);
 				platform->mouse_click(btn);
 			} else if ((btn = config_input_match(ev, "oneshot_buttons"))) {
+				/*
+				 * Click and leave straight away. Waiting here for a possible
+				 * second press (to make a double click) held the keyboard and
+				 * dropped whatever was typed next, which is usually the point
+				 * of clicking into a field. Clicks within 300 ms are still
+				 * counted as a double click by mouse_click(), so a button key
+				 * followed quickly by this one still double-clicks.
+				 */
 				hist_add(mx, my);
 				platform->mouse_click(btn);
-
-				const int timeout = config_get_int("oneshot_timeout");
-
-				while (1) {
-					struct input_event *ev = platform->input_next_event(timeout);
-
-					if (!ev)
-						break;
-
-					if (ev && ev->pressed &&
-						config_input_match(ev, "oneshot_buttons")) {
-						platform->mouse_click(btn);
-					}
-				}
-
 				goto exit;
 			}
 		}

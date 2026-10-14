@@ -67,7 +67,6 @@ static struct {
 	{ "decelerator_speed", "50", "Pointer speed while decelerator is depressed.", OPT_INT },
 	{ "acceleration", "700", "Pointer acceleration in pixels/second^2.", OPT_INT },
 	{ "accelerator_acceleration", "2900", "Pointer acceleration while the accelerator is depressed.", OPT_INT },
-	{ "oneshot_timeout", "300", "The length of time in milliseconds to wait for a second click after a oneshot key has been pressed.", OPT_INT },
 	{ "hist_hint_size", "2", "History hint size as a percentage of screen height.", OPT_INT },
 	{ "grid_nr", "2", "The number of rows in the grid.", OPT_INT },
 	{ "grid_nc", "2", "The number of columns in the grid.", OPT_INT },
