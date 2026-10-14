@@ -46,7 +46,11 @@ static long get_time_ms(void)
 
 static void write_message(int fd, void *msg, ssize_t sz)
 {
-	assert(write(fd, msg, sz) == sz);
+	/* Keep the I/O outside assert() so it still happens when built with NDEBUG. */
+	ssize_t n = write(fd, msg, sz);
+
+	assert(n == sz);
+	(void)n;
 }
 
 /* Returns -1 if the timeout expires before a message is available. */
@@ -64,7 +68,10 @@ static int read_message(int fd, void *msg, ssize_t sz, int timeout)
 	if (!FD_ISSET(fd, &fds))
 		return -1;
 
-	assert(read(fd, msg, sz) == sz);
+	ssize_t n = read(fd, msg, sz);
+
+	assert(n == sz);
+	(void)n;
 
 	return 0;
 }
