@@ -94,6 +94,12 @@ struct platform {
 	* is called.
 	*/
 	void (*commit)(void);
+
+	/*
+	 * Re-read the screen list if it changed since the last call. Optional
+	 * (may be NULL); only called between modes, never while one is active.
+	 */
+	void (*screen_refresh)(void);
 };
 
 void platform_run(int (*main) (struct platform *platform));

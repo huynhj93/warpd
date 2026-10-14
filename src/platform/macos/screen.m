@@ -52,10 +52,21 @@ void osx_screen_get_dimensions(struct screen *scr, int *w, int *h)
 	*h = scr->h;
 }
 
-void macos_init_screen(void)
+/* Set on the main thread when macOS reports a display change. */
+static int screens_dirty;
+
+/* Must run on the main thread. */
+static void build_screens(void)
 {
+	nr_screens = 0;
 	for (NSScreen *screen in NSScreen.screens) {
-		struct screen *scr = &screens[nr_screens++];
+		struct screen *scr;
+
+		if (nr_screens == MAX_SCREENS)
+			break;
+
+		scr = &screens[nr_screens++];
+		memset(scr, 0, sizeof *scr);
 
 		scr->x = screen.frame.origin.x;
 		scr->y = screen.frame.origin.y;
@@ -64,4 +75,42 @@ void macos_init_screen(void)
 
 		scr->overlay = create_overlay_window(scr->x, scr->y, scr->w, scr->h);
 	}
+}
+
+/*
+ * The screen list used to be read once at startup, so after docking or
+ * undocking warpd worked with displays that no longer existed. Rebuild it
+ * (and the per-screen overlay windows) when it has changed. Called between
+ * modes, so nothing is drawing on the old overlays.
+ */
+void osx_screen_refresh(void)
+{
+	dispatch_sync(dispatch_get_main_queue(), ^{
+		size_t i;
+
+		if (!screens_dirty)
+			return;
+		screens_dirty = 0;
+
+		for (i = 0; i < nr_screens; i++) {
+			/* Borderless NSWindows are released when closed. */
+			[screens[i].overlay->win close];
+			free(screens[i].overlay);
+		}
+
+		build_screens();
+	});
+}
+
+void macos_init_screen(void)
+{
+	build_screens();
+
+	[[NSNotificationCenter defaultCenter]
+	    addObserverForName:NSApplicationDidChangeScreenParametersNotification
+			object:nil
+			 queue:[NSOperationQueue mainQueue]
+		    usingBlock:^(NSNotification *note) {
+			    screens_dirty = 1;
+		    }];
 }

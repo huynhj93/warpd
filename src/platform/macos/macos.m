@@ -187,6 +187,7 @@ static void *mainloop(void *arg)
 		.screen_list = osx_screen_list,
 		.scroll = osx_scroll,
 		.monitor_file = osx_monitor_file,
+		.screen_refresh = osx_screen_refresh,
 	};
 
 	main(&platform);

@@ -79,6 +79,7 @@ struct window *create_overlay_window(int x, int y, int w, int h)
 	view.win = win;
 
 	[nsWin setContentView:view];
+	[view release]; /* now owned by the window */
 
 	[nsWin setBackgroundColor:[NSColor clearColor]];
 	[nsWin makeKeyAndOrderFront:nil];

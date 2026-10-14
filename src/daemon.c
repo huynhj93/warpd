@@ -79,6 +79,10 @@ void daemon_loop(const char *config_path)
 			continue;
 		}
 
+		/* Between modes: pick up any display change before acting on the key. */
+		if (platform->screen_refresh)
+			platform->screen_refresh();
+
 		config_input_whitelist(activation_keys, sizeof activation_keys / sizeof activation_keys[0]);
 
 		if (config_input_match(ev, "activation_key"))

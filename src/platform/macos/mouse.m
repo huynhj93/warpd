@@ -160,8 +160,42 @@ void osx_mouse_get_position(struct screen **_scr, int *_x, int *_y)
 		}
 	}
 
-	fprintf(stderr, "Could not find active screen within (%d, %d)\n", x, y);
-	exit(-1);
+	/*
+	 * The pointer is outside every known screen, e.g. the display list is
+	 * stale after a display change. Clamp it onto the nearest screen rather
+	 * than exiting; the list is refreshed before the next mode starts.
+	 */
+	struct screen *best = NULL;
+	long best_d = -1;
+
+	for (i = 0; i < nr_screens; i++) {
+		struct screen *scr = &screens[i];
+		long cx = x < scr->x ? scr->x : (x > scr->x + scr->w ? scr->x + scr->w : x);
+		long cy = y < scr->y ? scr->y : (y > scr->y + scr->h ? scr->y + scr->h : y);
+		long d = (cx - x) * (cx - x) + (cy - y) * (cy - y);
+
+		if (best_d < 0 || d < best_d) {
+			best = scr;
+			best_d = d;
+		}
+	}
+
+	if (!best) {
+		fprintf(stderr, "No screens available\n");
+		exit(-1);
+	}
+
+	x = x < best->x ? best->x : (x > best->x + best->w ? best->x + best->w : x);
+	y = y < best->y ? best->y : (y > best->y + best->h ? best->y + best->h : y);
+	x -= best->x;
+	y = best->h - (y - best->y);
+
+	if (_x)
+		*_x = x;
+	if (_y)
+		*_y = y;
+	if (_scr)
+		*_scr = best;
 }
 
 void osx_mouse_move(struct screen *scr, int x, int y)
