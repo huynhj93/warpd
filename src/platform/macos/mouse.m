@@ -180,6 +180,7 @@ void osx_mouse_move(struct screen *scr, int x, int y)
 	NSPoint nspos = [NSEvent mouseLocation]; //LLO global coordinate system
 	CGEventRef CGEv = CGEventCreate(NULL);
 	CGPoint cgpos = CGEventGetLocation(CGEv); //ULO global coordinate system :(
+	CFRelease(CGEv);
 
 	cgx = x - nspos.x + cgpos.x;
 	cgy = cgpos.y - (y - nspos.y);

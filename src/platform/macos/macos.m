@@ -142,6 +142,7 @@ void osx_scroll(int direction)
 	CGEventRef ev = CGEventCreateScrollWheelEvent(
 	    NULL, kCGScrollEventUnitPixel, 2, y, x);
 	CGEventPost(kCGHIDEventTap, ev);
+	CFRelease(ev);
 }
 
 void osx_commit(void)
