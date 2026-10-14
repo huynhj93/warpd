@@ -192,13 +192,32 @@ static void config_add(const char *key, const char *val)
 	switch (ent->type) {
 		int i;
 
-		case OPT_INT:
+		case OPT_INT: {
+			/* Digits can't contain '#', so a trailing comment is safe to drop here. */
+			char *hash = strchr(ent->value, '#');
+			size_t len;
+
+			if (hash)
+				*hash = 0;
+			len = strlen(ent->value);
+			while (len && isspace((unsigned char)ent->value[len-1]))
+				ent->value[--len] = 0;
+
+			/*
+			 * Keep the default rather than exiting: with config reloading
+			 * and a supervisor restarting warpd, exiting on a typo turns
+			 * into a crash loop until the file is fixed.
+			 */
 			for (i = 0; ent->value[i]; i++)
-				if (!isdigit(ent->value[i]) && !(i == 0 && ent->value[0] == '-')) {
-					fprintf(stderr, "ERROR: %s must be a valid int\n", ent->value);
-					exit(-1);
-				}
+				if (!isdigit((unsigned char)ent->value[i]) && !(i == 0 && ent->value[0] == '-'))
+					break;
+			if (!len || ent->value[i]) {
+				fprintf(stderr, "ERROR: %s: '%s' is not a valid int, keeping the default\n", key, val);
+				free(ent);
+				return;
+			}
 			break;
+		}
 		case OPT_BUTTON:
 		case OPT_KEY:
 			validate_key_option(ent->value);
@@ -250,7 +269,7 @@ void parse_config(const char *path)
 			while (*++delim == ' ');
 
 			len = strlen(delim);
-			while (delim[len-1] == '\n' || delim[len-1] == '\r')
+			while (len && isspace((unsigned char)delim[len-1]))
 				len--;
 
 			delim[len] = 0;
