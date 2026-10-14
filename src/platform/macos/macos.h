@@ -34,6 +34,9 @@ struct box {
 	int w;
 	int h;
 
+	/* Non-zero: draw the outline of the ellipse in the box, this thick. */
+	int ring;
+
 	struct screen *scr;
 	NSColor *color;
 };
@@ -86,6 +89,7 @@ void macos_init_input(void);
 void macos_init_mouse(void);
 void macos_init_screen(void);
 
+void macos_draw_ring(struct screen *scr, NSColor *col, float x, float y, float w, float h, float thickness);
 void macos_draw_box(struct screen *scr, NSColor *col, float x, float y, float w,
 		    float h, float r);
 
@@ -115,6 +119,7 @@ void osx_mouse_show(void);
 void osx_mouse_hide(void);
 void osx_screen_get_dimensions(screen_t scr, int *w, int *h);
 void osx_screen_draw_box(screen_t scr, int x, int y, int w, int h, const char *color);
+void osx_screen_draw_ring(screen_t scr, int x, int y, int r, int thickness, const char *color);
 void osx_screen_clear(screen_t scr);
 void osx_screen_list(screen_t scr[MAX_SCREENS], size_t *n);
 void osx_screen_refresh(void);

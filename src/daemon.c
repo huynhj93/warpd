@@ -10,6 +10,7 @@ static const char *activation_keys[] = {
 	"history_activation_key",
 	"screen_next_key",
 	"click_key",
+	"pulse_key",
 };
 
 static struct input_event activation_events[sizeof activation_keys / sizeof activation_keys[0]];
@@ -110,6 +111,12 @@ void daemon_loop(const char *config_path)
 			/* The event tap grabbed the keyboard when this key matched; no mode will release it. */
 			screen_next();
 			platform->input_ungrab_keyboard();
+			continue;
+		} else if (config_input_match(ev, "pulse_key")) {
+			/* The event tap grabbed the keyboard when this key matched; release it
+			 * before animating so typing isn't held up. */
+			platform->input_ungrab_keyboard();
+			pulse();
 			continue;
 		} else if (config_input_match(ev, "click_key")) {
 			/* ev is overwritten by the next read, so take the modifiers first. */

@@ -100,6 +100,9 @@ struct platform {
 	 * (may be NULL); only called between modes, never while one is active.
 	 */
 	void (*screen_refresh)(void);
+
+	/* Outline of a circle of radius r centred on (x, y). Optional (may be NULL). */
+	void (*screen_draw_ring)(screen_t scr, int x, int y, int r, int thickness, const char *color);
 };
 
 void platform_run(int (*main) (struct platform *platform));

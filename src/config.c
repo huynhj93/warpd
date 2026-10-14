@@ -21,6 +21,7 @@ static struct {
 	{ "screen_activation_key", "A-M-s", "Activate (s)creen selection mode.", OPT_KEY },
 	{ "screen_next_key", "A-M-n", "Move the pointer to the centre of the (n)ext screen without entering a mode.", OPT_KEY },
 	{ "click_key", "A-M-enter", "Left click where the pointer is without entering a mode, once the key's modifiers are released.", OPT_KEY },
+	{ "pulse_key", "A-M-y", "Briefly animate a ring around the pointer to show where it is, without entering a mode.", OPT_KEY },
 	{ "activation_key", "A-M-c", "Activate normal movement mode (manual (c)ursor movement).", OPT_KEY },
 
 	{ "hint_oneshot_key", "A-M-l", "Activate hint mode and exit upon selection.", OPT_KEY },

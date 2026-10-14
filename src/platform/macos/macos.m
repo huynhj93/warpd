@@ -66,6 +66,19 @@ void macos_draw_box(struct screen *scr, NSColor *col, float x, float y, float w,
 	[path fill];
 }
 
+void macos_draw_ring(struct screen *scr, NSColor *col, float x, float y, float w, float h, float thickness)
+{
+	/* Convert to LLO */
+	y = scr->h - y - h;
+
+	/* Inset by half the line width so the stroke stays inside the box. */
+	NSBezierPath *path = [NSBezierPath
+	    bezierPathWithOvalInRect:NSMakeRect(x + thickness / 2, y + thickness / 2,
+						w - thickness, h - thickness)];
+	[path setLineWidth:thickness];
+	[col setStroke];
+	[path stroke];
+}
 
 NSColor *nscolor_from_hex(const char *str)
 {
@@ -183,6 +196,7 @@ static void *mainloop(void *arg)
 		.mouse_up = osx_mouse_up,
 		.screen_clear = osx_screen_clear,
 		.screen_draw_box = osx_screen_draw_box,
+		.screen_draw_ring = osx_screen_draw_ring,
 		.screen_get_dimensions = osx_screen_get_dimensions,
 		.screen_list = osx_screen_list,
 		.scroll = osx_scroll,

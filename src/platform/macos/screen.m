@@ -12,7 +12,11 @@ size_t nr_screens;
 static void draw_hook(void *arg, NSView *view)
 {
 	struct box *b = arg;
-	macos_draw_box(b->scr, b->color, b->x, b->y, b->w, b->h, 0);
+
+	if (b->ring)
+		macos_draw_ring(b->scr, b->color, b->x, b->y, b->w, b->h, b->ring);
+	else
+		macos_draw_box(b->scr, b->color, b->x, b->y, b->w, b->h, 0);
 }
 
 void osx_screen_draw_box(struct screen *scr, int x, int y, int w, int h, const char *color)
@@ -24,6 +28,23 @@ void osx_screen_draw_box(struct screen *scr, int x, int y, int w, int h, const c
 	b->y = y;
 	b->w = w;
 	b->h = h;
+	b->scr = scr;
+	b->ring = 0;
+	b->color = nscolor_from_hex(color);
+
+	window_register_draw_hook(scr->overlay, draw_hook, b);
+}
+
+void osx_screen_draw_ring(struct screen *scr, int x, int y, int r, int thickness, const char *color)
+{
+	assert(scr->nr_boxes < MAX_BOXES);
+	struct box *b = &scr->boxes[scr->nr_boxes++];
+
+	b->x = x - r;
+	b->y = y - r;
+	b->w = 2 * r;
+	b->h = 2 * r;
+	b->ring = thickness > 0 ? thickness : 1;
 	b->scr = scr;
 	b->color = nscolor_from_hex(color);
 

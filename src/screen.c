@@ -79,3 +79,46 @@ void screen_next(void)
 	platform->screen_get_dimensions(cur, &w, &h);
 	platform->mouse_move(cur, w / 2, h / 2);
 }
+
+/*
+ * Show where the pointer is: two rings growing outward from it over about
+ * half a second, in the cursor colour. Circles where the platform can draw
+ * them, square outlines otherwise. Draws on its own and waits for no input.
+ */
+void pulse(void)
+{
+	const char *color = config_get("cursor_color");
+	const int waves = 2;
+	const int frames = 10;
+	int x, y, sw, sh;
+	int wave, frame;
+	screen_t scr;
+
+	platform->mouse_get_position(&scr, &x, &y);
+	platform->screen_get_dimensions(scr, &sw, &sh);
+
+	const int thickness = sh / 300 > 3 ? sh / 300 : 3;
+	const int step = sh / 60;
+
+	for (wave = 0; wave < waves; wave++) {
+		for (frame = 1; frame <= frames; frame++) {
+			const int r = 8 + step * frame;
+
+			platform->screen_clear(scr);
+			if (platform->screen_draw_ring) {
+				platform->screen_draw_ring(scr, x, y, r, thickness, color);
+			} else {
+				platform->screen_draw_box(scr, x - r, y - r, 2 * r, thickness, color);
+				platform->screen_draw_box(scr, x - r, y + r - thickness, 2 * r, thickness, color);
+				platform->screen_draw_box(scr, x - r, y - r, thickness, 2 * r, color);
+				platform->screen_draw_box(scr, x + r - thickness, y - r, thickness, 2 * r, color);
+			}
+			platform->commit();
+
+			usleep(25000);
+		}
+	}
+
+	platform->screen_clear(scr);
+	platform->commit();
+}
