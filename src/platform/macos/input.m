@@ -95,8 +95,12 @@ static CGEventRef eventTapCallback(CGEventTapProxy proxy, CGEventType type,
 	static uint8_t keymods[256] = {0}; /* Mods active at key down time. */
 	static long pressed_timestamps[256];
 
-	/* macOS will timeout the event tap, so we have to re-enable it :/ */
-	if (type == kCGEventTapDisabledByTimeout) {
+	/*
+	 * macOS disables the tap if a callback is too slow, and also in response to
+	 * user input (e.g. around secure input). Either way it stays off until
+	 * re-enabled, leaving warpd deaf.
+	 */
+	if (type == kCGEventTapDisabledByTimeout || type == kCGEventTapDisabledByUserInput) {
 		CGEventTapEnable(tap, true);
 		return event;
 	}
