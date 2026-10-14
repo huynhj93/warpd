@@ -134,6 +134,8 @@ struct input_event *normal_mode(struct input_event *start_ev, int oneshot)
 		}
 
 		platform->mouse_get_position(&scr, &mx, &my);
+		/* The pointer can cross to a different-sized screen at any point. */
+		platform->screen_get_dimensions(scr, &sw, &sh);
 
 		if (!system_cursor && on_time) {
 			if (show_cursor && (time - last_blink_update) >= (uint64_t)on_time) {
