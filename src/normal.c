@@ -6,6 +6,23 @@
 
 #include "warpd.h"
 
+/*
+ * Whether the drag button is held. This lives outside normal_mode() so a
+ * drag survives a detour through hint or grid mode, which the mode loop runs
+ * between separate normal_mode() calls.
+ */
+static int dragging;
+
+/* Release the drag button if a drag is in progress, e.g. when warpd exits. */
+void normal_release_drag(void)
+{
+	if (!dragging)
+		return;
+
+	platform->mouse_up(config_get_int("drag_button"));
+	dragging = 0;
+}
+
 static void redraw(screen_t scr, int x, int y, int hide_cursor)
 {
 	int sw, sh;
@@ -56,7 +73,6 @@ struct input_event *normal_mode(struct input_event *start_ev, int oneshot)
 	screen_t scr;
 	int sh, sw;
 	int mx, my;
-	int dragging = 0;
 	int show_cursor = !system_cursor;
 
 	int n = sscanf(blink_interval, "%d %d", &on_time, &off_time);
@@ -207,6 +223,7 @@ struct input_event *normal_mode(struct input_event *start_ev, int oneshot)
 				platform->mouse_up(config_get_int("drag_button"));
 		} else if (config_input_match(ev, "copy_and_exit")) {
 			platform->mouse_up(config_get_int("drag_button"));
+			dragging = 0;
 			platform->copy_selection();
 			ev = NULL;
 			goto exit;

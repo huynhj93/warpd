@@ -79,11 +79,14 @@ int mode_loop(int initial_mode, int oneshot, int record_history)
 			else
 				printf("%d %d\n", x, y);
 
+			normal_release_drag();
 			return btn;
 		}
 	}
 
 exit:
+	/* Mode switches never come through here, so a drag carried across them ends only when warpd does. */
+	normal_release_drag();
 	return rc;
 }
 

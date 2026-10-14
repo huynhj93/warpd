@@ -96,6 +96,7 @@ void screen_selection_mode(void);
 void screen_next(void);
 struct input_event *grid_mode(void);
 struct input_event *normal_mode(struct input_event *start_ev, int oneshot);
+void normal_release_drag(void);
 
 void init_hints(void);
 void init_normal_mode(void);
