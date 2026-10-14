@@ -320,10 +320,22 @@ struct input_event *osx_input_next_event(int timeout)
 	return &ev;
 }
 
+/*
+ * The event tap reads grabbed_keys on the main thread. Update it there too,
+ * so the tap never sees the pointer and the size out of step (e.g. a stale
+ * size with a NULL pointer, which it would then index).
+ */
+static void set_grabbed_keys(struct input_event *keys, size_t sz)
+{
+	dispatch_sync(dispatch_get_main_queue(), ^{
+		grabbed_keys = keys;
+		grabbed_keys_sz = sz;
+	});
+}
+
 struct input_event *osx_input_wait(struct input_event *keys, size_t sz)
 {
-	grabbed_keys = keys;
-	grabbed_keys_sz = sz;
+	set_grabbed_keys(keys, sz);
 
 	while (1) {
 		size_t i;
@@ -335,8 +347,7 @@ struct input_event *osx_input_wait(struct input_event *keys, size_t sz)
 		for (i = 0; i < sz; i++)
 			if (ev->pressed && keys[i].code == ev->code &&
 			    keys[i].mods == ev->mods) {
-				grabbed_keys = NULL;
-				grabbed_keys_sz = 0;
+				set_grabbed_keys(NULL, 0);
 
 				return ev;
 			}
