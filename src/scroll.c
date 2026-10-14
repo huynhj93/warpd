@@ -36,7 +36,15 @@ void scroll_tick(void)
 	int i;
 	/* Non zero to provide the illusion of continuous scrolling */
 
-	const float t = (float)(get_time_us()/1000 - last_tick); // time elapsed since last tick in ms
+	float t = (float)(get_time_us()/1000 - last_tick); // time elapsed since last tick in ms
+
+	/*
+	 * Ticks normally arrive every ~10 ms. A long gap (e.g. time spent outside
+	 * normal mode) would otherwise be integrated as one huge step and emitted
+	 * as a burst of scroll events.
+	 */
+	if (t > 100)
+		t = 100;
 	last_tick = get_time_us()/1000;
 
 	/* distance traveled since the last tick */

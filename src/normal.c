@@ -279,6 +279,8 @@ struct input_event *normal_mode(struct input_event *start_ev, int oneshot)
 	}
 
 exit:
+	/* Scrolling only advances while normal mode ticks; don't let it resume later. */
+	scroll_stop();
 	platform->mouse_show();
 	platform->screen_clear(scr);
 
